@@ -1,53 +1,38 @@
-/* Задание 2
-Сделайте функцию, которая находит в строке 'пробел', и выдает кусок строки от позиции после этой позиции до следующего 'пробел'.
-Если следующего нет, пускай выдает остальную часть строки.
-
-Сделайте тесты, как в прошлом задании.
-*/
-
-
 #include <iostream>
 #include <cassert>
 #include <string>
+#include <span>
 
-std::string secondWord(const std::string& str) {
-    // Первый пробел
-    size_t firstSpace = str.find(' ');
-
-    // Если нет пробела или строка пуста
-    if (firstSpace == std::string::npos || firstSpace == str.size() - 1) {
-        return "";
+std::span<const char> app(const std::string& h) {
+    int space = -1;
+    for (int i = 0; i < h.size(); ++i) {
+        if (h[i] == ' ') {
+            space = i;
+            break;
+        }
     }
-
-    // Пропускаем все пробелы после первого пробела
-    size_t startPos = str.find_first_not_of(' ', firstSpace);
-
-    // Если нет символов после пробелов
-    if (startPos == std::string::npos) {
-        return "";
+    if (space == -1 || space + 1 >= h.size()) {
+        return std::span<const char>{};
     }
-
-    // Следующий пробел после найденного слова
-    size_t secondSpace = str.find(' ', startPos);
-
-    // Возвращаем слово до следующего пробела или до конца строки
-    return str.substr(startPos, secondSpace - startPos);
+    return std::span<const char>(h.data() + space + 1, h.size() - space - 1);
 }
 
-
-// Тесты
 void runTests() {
-    assert(secondWord("Hello world") == "world");
-    assert(secondWord("Hello my dear") == "my");
-    assert(secondWord("") == "");
-    assert(secondWord(" ") == "");
-    assert(secondWord(" a ") == "a");
-    assert(secondWord("a  ") == "");
 
-    std::cout << "All tests passed!" << std::endl;
+    auto toString = [](std::span<const char> sp) {    // Тут уже преобразуется span в строку
+        return std::string(sp.data(), sp.size());
+    };
+
+    assert(toString(app("Hello world!")) == "world!");
+    assert(toString(app("Hello good person")) == "good person");
+    assert(toString(app("Hey I need help")) == "I need help");
+    assert(toString(app("WubbaLubbadub-dub")) == "");
 }
 
 int main() {
+    std::string input = "hello world!";
+    std::span<const char> result = app(input);
+    std::cout << "After space: " << std::string(result.data(), result.size()) << std::endl;
     runTests();
     return 0;
 }

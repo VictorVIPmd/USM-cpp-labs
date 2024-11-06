@@ -1,24 +1,24 @@
-// Использованные типы - int, Person, Leg, Arm
+// Типы - int, struct, 
+// Объекты - Leg, Arm, Person
 
 #include <array>
 
-struct Leg
+struct Leg // тип Struct 
 {
-    int length;
+    int length; // тип int, объекта Length
 };
 
-struct Arm
+struct Arm // тип Struct 
 {
-    int power;
+    int power; // тип int, объекта Power
 };
 
-struct Person
+struct Person // тип Struct 
 {
-    std::array<Leg, 2> legs;
-    Arm arms[2];
+    std::array<Leg, 2> legs; // Объекты
+    Arm arms[2]; // Объекты
 };
-
-int main()
+int main() // тип Int
 {
-    Person person;
+    Person person; //Объект
 }

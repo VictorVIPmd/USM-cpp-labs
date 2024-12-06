@@ -1,38 +1,32 @@
-#include <iostream>
 #include <cassert>
 #include <string>
-#include <span>
+#include <string_view>
 
-std::span<const char> app(const std::string& h) {
-    int space = -1;
-    for (int i = 0; i < h.size(); ++i) {
-        if (h[i] == ' ') {
-            space = i;
-            break;
-        }
+std::string_view secondWord(std::string_view str) {
+    char separator = ' ';
+
+    size_t firstSpace = str.find(separator);
+    
+    if (firstSpace == std::string_view::npos) {
+        return "";
     }
-    if (space == -1 || space + 1 >= h.size()) {
-        return std::span<const char>{};
+    
+    size_t secondSpace = str.find(separator, firstSpace + 1);
+    
+    if (secondSpace == std::string_view::npos) {
+        return str.substr(firstSpace + 1);
     }
-    return std::span<const char>(h.data() + space + 1, h.size() - space - 1);
-}
-
-void runTests() {
-
-    auto toString = [](std::span<const char> sp) {    // Тут уже преобразуется span в строку
-        return std::string(sp.data(), sp.size());
-    };
-
-    assert(toString(app("Hello world!")) == "world!");
-    assert(toString(app("Hello good person")) == "good person");
-    assert(toString(app("Hey I need help")) == "I need help");
-    assert(toString(app("WubbaLubbadub-dub")) == "");
+    
+    return str.substr(firstSpace + 1, secondSpace - firstSpace - 1);
 }
 
 int main() {
-    std::string input = "hello world!";
-    std::span<const char> result = app(input);
-    std::cout << "After space: " << std::string(result.data(), result.size()) << std::endl;
-    runTests();
-    return 0;
+    assert(secondWord("Hello world") == "world");
+    assert(secondWord("Hello my dear") == "my");
+    assert(secondWord("") == "");
+    assert(secondWord(" ") == "");
+    assert(secondWord(" a ") == "a");
+    assert(secondWord("a  ") == "");
+    assert(secondWord("a  b") == "");
+    assert(secondWord("hello     world    dear") == "");
 }
